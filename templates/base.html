@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>chatroom</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='dist/assets/favicon.ico') }}" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="{{ url_for('static', filename='dist/css/styles.css') }}" rel="stylesheet" />
+        <!-- JQuery 的 CDN 連結 -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+        <!-- Socket.IO 的 CDN 連結 -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"
+        integrity="sha512-WL6WGKMPBiM9PnHRYIn5YEtq0Z8XP4fkVb4qy7PP4vhmYQErJ/dySyXuFIMDf1eEYCXCrQrMJfkNwKc9gsjTjA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+        <!-- Socket.IO 的使用 -->
+        <script type="text/javascript" charset="utf-8">
+        $(document).ready(function () {
+            // Socket.IO Start connect
+            var socket = io.connect();
+            
+            var user = '{{current_user.username}}';
+            
+            // Socket.IO send message
+            $("#send").click(function (e) {
+                // Send message
+                socket.emit('send', $('#message').val())
+                // Clear input field
+                $('#message').val('')
+            });
+            
+            // Socket.IO get message
+            socket.on('get', function (client) {
+                $('#chat_content').append('<p align=center>'+ client.name +' say: ' + client.message + '</p>');
+            });
+
+            // Socket.IO send test
+            $("#test").click(function (e) {
+                socket.emit('test')
+            });
+
+            // Socket.IO get test
+            socket.on("message", function (data) {
+                $('#chat_content').append('<p>System : ' + data + '</p>');
+            });
+            
+        });
+        </script>
+    </head>
+    <body>
+        <!-- Responsive navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="#">chatroom</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="{{url_for('home')}}">Home</a></li>
+                        {% if current_user.is_authenticated %}
+                        <li class="nav-item"><a class="nav-link" href="{{url_for('logout')}}">Logout</a></li>
+                        {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{{url_for('login')}}">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{url_for('register')}}">Register</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Page content-->
+        <div class="container">
+            <div class="text-center mt-5">
+                <main>
+                    {% block content %} {% endblock %}
+                </main>
+            </div>
+        </div>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <!-- <script src="js/scripts.js"></script> -->
+        <script src="{{ url_for('static', filename='dist/js/scripts.js') }}"></script>
+    </body>
+</html>
