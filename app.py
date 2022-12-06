@@ -75,8 +75,8 @@ def test():
     socketio.send("test")
 
 @app.route('/live')
-def index():
-    return render_template('index.html')
+def live():
+    return render_template('live.html')
 
 @app.route('/video_feed')
 def video_feed():
