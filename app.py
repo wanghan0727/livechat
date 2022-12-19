@@ -10,7 +10,6 @@ import cv2
 
 
 socketio = SocketIO(app)
-camera = cv2.VideoCapture(0)
 
 
 @app.route('/')
@@ -78,8 +77,8 @@ def test():
 def live():
     return render_template('live.html')
 
-@app.route('/video_feed')
-def video_feed():
+@app.route('/video')
+def video():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
@@ -97,7 +96,8 @@ def gen_frames():
 
 
 if __name__ == '__main__':
+    camera = cv2.VideoCapture(1)
     with app.app_context():
         db.create_all()
-    socketio.run(app, debug=True)
+    socketio.run(app, use_reloader=False) # , debug=True)
     # app.run(debug=True)
